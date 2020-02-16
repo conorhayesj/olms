@@ -1,0 +1,13 @@
+<html>
+	<body>
+		<h1> All Books </h1>
+		<ol>
+			{{range $i, $x := .}}
+			<li><ul>
+				<li>{{ $x.Name }}</li>
+				<li>{{ $x.Avail }}</li>
+			</ul></li>
+			{{ end }}
+		</ol>
+	</body>
+</html>
