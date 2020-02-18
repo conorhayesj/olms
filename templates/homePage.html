@@ -1,0 +1,19 @@
+<html>
+	<body>
+		<h1> All Books </h1>
+		<ol>
+			{{range $i, $x := .}}
+			<li><ul>
+				<li><a href="/book/{{ $x.ID }}">{{ $x.Name }}</a></li>
+				<li>{{ $x.Avail }}</li>
+			</ul></li>
+			{{ end }}
+		</ol>
+	</body>
+	<h1> Add a new book? </h1>
+	<form action="/api/v1/addBook" method="post">
+		<label for="name">Book Name:</label><br>
+		<input type="text" id="name" name="name"><br>
+		<input type="submit" value="Add">
+	</form>
+</html>

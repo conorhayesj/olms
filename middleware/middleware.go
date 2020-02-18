@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -31,7 +30,7 @@ func init() {
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
 	var book Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
+	book.Name = r.FormValue("name")
 	fmt.Println(book)
 	db.Create(&book)
 	fmt.Fprintf(w, "Adding new book.")
@@ -45,7 +44,17 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, book.Name)
 }
 
-func GetBookByName(w http.ResponseWriter, r *http.Request) {
+func GetBookReturn(w http.ResponseWriter, r *http.Request) Book {
+	bookId := mux.Vars(r)
+        key := bookId["bookId"]
+        book := Book{}
+        db.Where("id = ?", key).Find(&book)
+	fmt.Println(book)
+	return book
+}
+
+
+func FindBookByName(w http.ResponseWriter, r *http.Request) {
 	bookSearch := mux.Vars(r)
 	search := bookSearch["bookSearch"]
 	search = "%" + search + "%"
