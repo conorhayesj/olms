@@ -65,7 +65,7 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	db.Unscoped().Delete(&book)
 }
 
-func GetAllBooks(w http.ResponseWriter, r *http.Request) {
+func GetAllBooks(w http.ResponseWriter, r *http.Request) []Book {
 	fmt.Println("TEST")
 	books := []Book{}
 	db.Find(&books)
@@ -73,6 +73,7 @@ func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	for _, book := range books {
 		fmt.Println(book.Name)
 	}
+	return books
 }
 
 func CheckOutBook() {
