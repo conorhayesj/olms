@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"html/template"
 	"github.com/gorilla/mux"
+	"./routes"
 )
 
 type Book struct {
@@ -21,15 +22,6 @@ type Book struct {
 var db *gorm.DB
 var err error
 
-func handleRequests() {
-	r := mux.NewRouter()
-	r.HandleFunc("/", getAllBooks)
-	r.HandleFunc("/api/v1/book/{bookId}", getBook).Methods("GET")
-	r.HandleFunc("/api/v1/search/{bookSearch}", getBookByName).Methods("GET")
-	r.HandleFunc("/api/v1/addBook", addBook).Methods("PUT")
-	r.HandleFunc("/api/v1/delBook/{bookId}", deleteBook).Methods("DELETE")
-	http.ListenAndServe(":8080", r)
-}
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Wooo. Homepage")
@@ -52,7 +44,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func getBookByName(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("searchByName.html"))
+	tmpl := template.Must(template.ParseFiles("templates/searchByName.html"))
 	bookSearch := mux.Vars(r)
 	search := bookSearch["bookSearch"]
 	search = "%" + search + "%"
@@ -74,7 +66,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllBooks(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("allBooks.html"))
+	tmpl := template.Must(template.ParseFiles("templates/allBooks.html"))
 	books := []Book{}
 	db.Find(&books)
 	fmt.Println(books)
