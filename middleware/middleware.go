@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -29,30 +30,30 @@ func init() {
 }
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/w-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Method", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	var book Book
-	book.Name = r.FormValue("name")
-	fmt.Println(book)
+
+	_ = json.NewDecoder(r.Body).Decode(&book)
+
 	db.Create(&book)
-	fmt.Fprintf(w, "Adding new book.")
+	json.NewEncoder(w).Encode(book)
 }
 
 func GetBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/w-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	bookId := mux.Vars(r)
 	key := bookId["bookId"]
 	book := Book{}
 	db.Where("id = ?", key).Find(&book)
-	fmt.Fprintf(w, book.Name)
+	json.NewEncoder(w).Encode(book)
 }
-
-func GetBookReturn(w http.ResponseWriter, r *http.Request) Book {
-	bookId := mux.Vars(r)
-        key := bookId["bookId"]
-        book := Book{}
-        db.Where("id = ?", key).Find(&book)
-	fmt.Println(book)
-	return book
-}
-
 
 func FindBookByName(w http.ResponseWriter, r *http.Request) {
 	bookSearch := mux.Vars(r)
@@ -67,22 +68,29 @@ func FindBookByName(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Context-Type", "application/w-www-form-urlencoded")
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	bookId := mux.Vars(r)
 	key := bookId["bookId"]
 	book := Book{}
 	db.Where("id = ?", key).Find(&book)
 	db.Unscoped().Delete(&book)
+	json.NewEncoder(w).Encode(book)
 }
 
-func GetAllBooks(w http.ResponseWriter, r *http.Request) []Book {
-	fmt.Println("TEST")
+func GetAllBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/w-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	books := []Book{}
 	db.Find(&books)
 	fmt.Println(books)
 	for _, book := range books {
 		fmt.Println(book.Name)
 	}
-	return books
+	json.NewEncoder(w).Encode(books)
 }
 
 func CheckOutBook() {
